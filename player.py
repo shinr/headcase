@@ -13,7 +13,7 @@ class Player:
 		hd = 1.0
 		
 		gl.glUseProgram(self.shader.program)
-		
+		gl.glUniform1f(shader.uniform_location)
 		gl.glBegin(gl.GL_QUADS)
 		gl.glVertex3f(self.x - hd, self.y + hd,hd)
 		gl.glVertex3f(self.x - hd, self.y - hd,hd)

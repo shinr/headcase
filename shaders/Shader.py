@@ -4,6 +4,7 @@ import os
 
 class Shader:
 	program = None
+	uniform_location = None
 	def __init__(self, vertex_shader=None, fragment_shader=None):
 		self.create_shader(vertex_shader, fragment_shader)
 
@@ -28,9 +29,12 @@ class Shader:
 				gl.glGetProgramInfoLog(program_id, length, written, buff)	
 				print buff.value
 
+	def set_uniform(self, uniform_name):
+		self.uniform_location = gl.glGetUniformLocation(self.program, uniform_name)
+
 	def read_shader(self, shader_file):
 		shader_path = "./"
-		f = open(os.path.dirname(os.path.realpath(__file__)) + '\\' + shader_file, 'r')
+		f = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), shader_file), 'r')
 		contents = f.read()
 		string_buffer = ctypes.create_string_buffer(contents)
 		shader = ctypes.cast(ctypes.pointer(ctypes.pointer(string_buffer)), ctypes.POINTER(ctypes.POINTER(gl.GLchar)))
