@@ -7,6 +7,7 @@ class Player:
 	rect = [-1.0, -1.0, 1.0, 1.0]
 	x = 0.0
 	y = 0.0
+	vertices = []
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
 

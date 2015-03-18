@@ -1,25 +1,27 @@
 import pyglet
 from pyglet import gl, event
 from player import Player
+from renderer import Renderer
 
 class Game(pyglet.window.Window):
 	entities = []
 	keys = []
+	renderer = None
 	def __init__(self, width, height):
 		super(Game, self).__init__(width, height)
 		self.entities.append(Player())
 
 	def on_draw(self):
-		gl.glClear(gl.GL_COLOR_BUFFER_BIT|gl.GL_DEPTH_BUFFER_BIT)
-		gl.glLoadIdentity()
-		gl.gluLookAt(5.0,5.0,5.0, 0.0,0.0,0.0,0.0,1.0,0.0)
+		self.renderer.render()
+		
 
 		# draw ....
-		for e in self.entities:
-			e.render()
+		
 
 	# initialize gl
 	def on_resize(self, width, height):
+		self.renderer = Renderer()
+		self.renderer.queue(*self.entities)
 		gl.glEnable(gl.GL_DEPTH_TEST)
 		gl.glEnable(gl.GL_BLEND)
 		gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
@@ -31,6 +33,7 @@ class Game(pyglet.window.Window):
 		gl.glLoadIdentity()
 		gl.gluPerspective(65, width / float(height), .1, 1000)
 		gl.glMatrixMode(gl.GL_MODELVIEW)
+
 		return event.EVENT_HANDLED
 
 	def update(self, dt):
