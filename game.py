@@ -54,10 +54,10 @@ class Game(pyglet.window.Window):
 	
 
 if __name__ == '__main__':
-	gl.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MAJOR, 3);
-	gl.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MINOR, 3);
-	gl.glfwWindowHint(gl.GLFW_OPENGL_PROFILE, gl.GLFW_OPENGL_CORE_PROFILE);
-	gl.glfwWindowHint(gl.GLFW_OPENGL_FORWARD_COMPAT, gl.GL_TRUE);
+	glfw.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfw.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfw.glfwWindowHint(gl.GLFW_OPENGL_PROFILE, gl.GLFW_OPENGL_CORE_PROFILE);
+	glfw.glfwWindowHint(gl.GLFW_OPENGL_FORWARD_COMPAT, gl.GL_TRUE);
 
 	game = Game(800, 600)
 	pyglet.clock.schedule_interval(game.update, 1/120.0)
