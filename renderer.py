@@ -6,17 +6,18 @@ class Renderer:
 	vbo = ctypes.c_uint(0)
 	vertices = []
 	def __init__(self):
-		gl.glGenVertexArrays(1, ctypes.pointer(self.vao))
-		gl.glBindVertexArray(1, self.vao)
+		gl.glGenVertexArrays(1, ctypes.byref(self.vao))
+		gl.glBindVertexArray(self.vao)
 		gl.glGenBuffers(1, self.vbo)
 		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo)
 
 	def queue(self, *objects):
 		for o in objects:
 			self.vertices.extend(o.vertices)
-		pos = gl.glGetAttribLocation(o.shader, "position")
+		pos = gl.glGetAttribLocation(o.shader.program, "position")
+		print pos
 		gl.glEnableVertexAttribArray(pos)
-		gl.glVertexAttributePoint(pos, 2, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
+		gl.glVertexAttribPointer(pos, 2, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
 		self.construct_vbo()
 
 	def construct_vbo(self):
