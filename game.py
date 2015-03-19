@@ -3,14 +3,16 @@ from pyglet import gl, event
 from player import Player
 from renderer import Renderer
 import ctypes
+import cyglfw3 as glfw
 
 class Game(pyglet.window.Window):
 	entities = []
 	keys = []
 	renderer = None
 	def __init__(self, width, height):
-		super(Game, self).__init__(width, height)
+		super(Game, self).__init__(width, height, config=gl.Config(major_version=3, minor_version=3))
 		self.entities.append(Player())
+		print ":", pyglet.window.Window().context.get_info().get_version()
 
 	def on_draw(self):
 		self.renderer.render()
@@ -54,10 +56,11 @@ class Game(pyglet.window.Window):
 	
 
 if __name__ == '__main__':
-	glfw.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfw.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfw.glfwWindowHint(gl.GLFW_OPENGL_PROFILE, gl.GLFW_OPENGL_CORE_PROFILE);
-	glfw.glfwWindowHint(gl.GLFW_OPENGL_FORWARD_COMPAT, gl.GL_TRUE);
+	#glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, 3);
+	#glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 3);
+	#glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE);
+	#glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE);
+	#glfw.CreateWindow(800, 600, "Jeesus", None, None)
 
 	game = Game(800, 600)
 	pyglet.clock.schedule_interval(game.update, 1/120.0)

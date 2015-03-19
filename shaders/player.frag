@@ -1,4 +1,4 @@
-#version 210
+#version 150
 uniform float time;
 void main() { 
 		float alpha = 1.0;
