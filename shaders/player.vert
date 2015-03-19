@@ -1,3 +1,4 @@
+#version 210
 uniform float time;
 in vec4 position;
 void main() { 

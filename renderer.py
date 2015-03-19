@@ -15,13 +15,13 @@ class Renderer:
 		for o in objects:
 			self.vertices.extend(o.vertices)
 		pos = gl.glGetAttribLocation(o.shader.program, "position")
-		print pos
 		gl.glEnableVertexAttribArray(pos)
 		gl.glVertexAttribPointer(pos, 2, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
 		self.construct_vbo()
 
 	def construct_vbo(self):
-		gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self.vertices), self.vertices, gl.GL_STATIC_DRAW)	
+		data = (gl.GLFloat * len(self.vertices))(*self.vertices)
+		gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self.vertices), data, gl.GL_STATIC_DRAW)	
 
 	def construct_vao(self):
 		pass

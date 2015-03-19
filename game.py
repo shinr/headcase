@@ -2,6 +2,7 @@ import pyglet
 from pyglet import gl, event
 from player import Player
 from renderer import Renderer
+import ctypes
 
 class Game(pyglet.window.Window):
 	entities = []
@@ -20,6 +21,9 @@ class Game(pyglet.window.Window):
 
 	# initialize gl
 	def on_resize(self, width, height):
+		print ctypes.string_at(gl.glGetString(gl.GL_VERSION))
+		print ctypes.string_at(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION))
+		print "-------"
 		self.renderer = Renderer()
 		self.renderer.queue(*self.entities)
 		gl.glEnable(gl.GL_DEPTH_TEST)
@@ -50,6 +54,11 @@ class Game(pyglet.window.Window):
 	
 
 if __name__ == '__main__':
+	gl.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MAJOR, 3);
+	gl.glfwWindowHint(gl.GLFW_CONTEXT_VERSION_MINOR, 3);
+	gl.glfwWindowHint(gl.GLFW_OPENGL_PROFILE, gl.GLFW_OPENGL_CORE_PROFILE);
+	gl.glfwWindowHint(gl.GLFW_OPENGL_FORWARD_COMPAT, gl.GL_TRUE);
+
 	game = Game(800, 600)
 	pyglet.clock.schedule_interval(game.update, 1/120.0)
 	pyglet.app.run()
