@@ -26,12 +26,18 @@ class Game:
 			print(sdl2.SDL_GetError())
 			return -1
 		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
-		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MINOR_VERSION, 3)
+		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MINOR_VERSION, 2)
 		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_PROFILE_MASK,
 		video.SDL_GL_CONTEXT_PROFILE_CORE)
 		self.context = sdl2.SDL_GL_CreateContext(self.window)
-		self.entities.append(Player())
+		print ctypes.string_at(GL.glGetString(GL.GL_VERSION))
+		print ctypes.string_at(GL.glGetString(GL.GL_SHADING_LANGUAGE_VERSION))
+		print "setting up renderer"
+		print "--------------------------"
 		self.renderer = Renderer()
+		print "setting up shaders"
+		print "--------------------------"
+		self.entities.append(Player())
 		
 
 	def on_draw(self):		

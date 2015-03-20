@@ -43,12 +43,20 @@ class Shader:
 	def create_shader(self, vert_shader=None, frag_shader=None):
 		if vert_shader:
 			vert = shaders.compileShader(self.read_shader(vert_shader), GL.GL_VERTEX_SHADER)
-			self.check_shader(vert, GL.GL_COMPILE_STATUS)
+			print vert
+			#self.check_shader(vert, GL.GL_COMPILE_STATUS)
 
 		if frag_shader:
 			frag = shaders.compileShader(self.read_shader(frag_shader), GL.GL_FRAGMENT_SHADER)
-			self.check_shader(frag, GL.GL_COMPILE_STATUS)
+			print frag
+			#self.check_shader(frag, GL.GL_COMPILE_STATUS)
 
-		self.program = shaders.compileProgram(vert, frag)
+		self.program = GL.glCreateProgram();
+		GL.glAttachShader(self.program, vert);
+		GL.glAttachShader(self.program, frag);
+		GL.glBindFragDataLocation(self.program, 0, "outColor");
+		GL.glLinkProgram(self.program);
+		#GL.glUseProgram(shaderProgram);
+		#self.program = shaders.compileProgram(vert, frag)
 
 		self.check_shader(self.program, GL.GL_LINK_STATUS)

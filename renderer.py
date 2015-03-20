@@ -16,6 +16,7 @@ class Renderer:
 	], dtype=numpy.float32)
 	program = None
 	def __init__(self):
+		
 		self.vao = GL.glGenVertexArrays(1)
 		GL.glBindVertexArray(self.vao)
 		self.vbo = GL.glGenBuffers(1)
