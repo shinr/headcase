@@ -1,18 +1,37 @@
-import pyglet
-from pyglet import gl, event
+from OpenGL import GL
 from player import Player
 from renderer import Renderer
 import ctypes
 #import cyglfw3 as glfw
 import sdl2
+from sdl2 import video
 
-class Game(pyglet.window.Window):
+class Game:
 	entities = []
 	keys = []
 	renderer = None
+	window = None
+	context = None
 	def __init__(self, width, height):
-		super(Game, self).__init__(width, height)#), config=gl.Config(major_version=3, minor_version=3))
+		if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) != 0:
+			print (sdl2.SDL_GetError())
+			return -1
+		self.window = sdl2.SDL_CreateWindow(b"Headcase", 
+												sdl2.SDL_WINDOWPOS_UNDEFINED,
+												sdl2.SDL_WINDOWPOS_UNDEFINED,
+												width,
+												height,
+												sdl2.SDL_WINDOW_OPENGL)
+		if not self.window:
+			print(sdl2.SDL_GetError())
+			return -1
+		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
+		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MINOR_VERSION, 3)
+		video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_PROFILE_MASK,
+		video.SDL_GL_CONTEXT_PROFILE_CORE)
+		self.context = sdl2.SDL_GL_CreateContext(self.window)
 		self.entities.append(Player())
+		self.renderer = Renderer()
 		
 
 	def on_draw(self):		
@@ -20,31 +39,6 @@ class Game(pyglet.window.Window):
 		
 
 		# draw ....
-		
-
-	# initialize gl
-	def on_resize(self, width, height):
-		print ctypes.string_at(gl.glGetString(gl.GL_VERSION))
-		print ctypes.string_at(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION))
-		print "-------"
-		
-		self.renderer = Renderer()
-		self.renderer.create()
-		self.renderer.queue(*self.entities)
-		gl.glEnable(gl.GL_DEPTH_TEST)
-		gl.glEnable(gl.GL_BLEND)
-		gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-		gl.glEnable(gl.GL_CULL_FACE)
-		gl.glCullFace(gl.GL_BACK);
-		gl.glClearColor(0.2, 0.2, 0.2, 1.0)
-		gl.glViewport(0, 0, width, height)
-		gl.glMatrixMode(gl.GL_PROJECTION)
-		gl.glLoadIdentity()
-		gl.gluPerspective(65, width / float(height), .1, 1000)
-		gl.glMatrixMode(gl.GL_MODELVIEW)
-		
-		
-		return event.EVENT_HANDLED
 
 	def update(self, dt):
 		self.entities[0].update(self.keys)
@@ -57,11 +51,29 @@ class Game(pyglet.window.Window):
 		if button in self.keys: 
 			self.keys.remove(button)
 
-	
+	def loop(self):
+		event = sdl2.SDL_Event()
+		running = True
+		while running:
+			while sdl2.SDL_PollEvent(ctypes.byref(event)) != 0:
+				if event.type == sdl2.SDL_QUIT:
+					running = False
+
+			GL.glClearColor(0, 0, 0, 1)
+			GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+			self.renderer.render(self.entities[0].shader.program)
+
+			sdl2.SDL_GL_SwapWindow(self.window)
+			sdl2.SDL_Delay(10)
+
+		sdl2.SDL_GL_DeleteContext(self.context)
+		sdl2.SDL_DestroyWindow(self.window)
+		sdl2.SDL_Quit()
+		return 0
 if __name__ == '__main__':
 	game = Game(800, 600)
-	pyglet.clock.schedule_interval(game.update, 1/120.0)
-	pyglet.app.run()
+	game.loop()
 
 #glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, 3);
 	#glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 3);

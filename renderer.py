@@ -1,41 +1,47 @@
-from pyglet import gl
+from OpenGL import GL
 import ctypes
+import numpy
 
 class Renderer:
-	vao = ctypes.c_uint(0)
-	vbo = ctypes.c_uint(0)
+	vao = None
+	vbo = None
 	vertices = []
+	vertexData = numpy.array([
+		0.0, 0.5, 0.0, 1.0,
+		0.5, -0.366, 0.0, 1.0,
+		-0.5, -0.366, 0.0, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 1.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
+	], dtype=numpy.float32)
 	program = None
 	def __init__(self):
-		pass
+		self.vao = GL.glGenVertexArrays(1)
+		GL.glBindVertexArray(self.vao)
+		self.vbo = GL.glGenBuffers(1)
+		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
+		GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
+		GL.glEnableVertexAttribArray(0)
+		GL.glEnableVertexAttribArray(1)
+		GL.glVertexAttribPointer(0, 4, GL.GL_FLOAT, GL.GL_FALSE, 0,
+		None)
+		GL.glVertexAttribPointer(1, 4, GL.GL_FLOAT, GL.GL_FALSE, 0,
+		ctypes.c_void_p(48))
+		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
+		GL.glBindVertexArray(0)
 
-	def create(self):
-		gl.glGenVertexArrays(1, ctypes.byref(self.vao))
-		gl.glBindVertexArray(self.vao)
-		gl.glGenBuffers(1, self.vbo)
-		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo)
+	def render(self, program):
+		GL.glClearColor(0, 0, 0, 1)
+		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-	def queue(self, *objects):
-		for o in objects:
-			self.vertices.extend(o.vertices)
-		self.program = o.shader.program
-		gl.glUseProgram(self.program)
-		pos = gl.glGetAttribLocation(self.program, "position")
-		gl.glEnableVertexAttribArray(pos)
-		gl.glVertexAttribPointer(pos, 2, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
-		self.construct_vbo()
-		
+		# active shader program
+		GL.glUseProgram(program)
 
-	def construct_vbo(self):
-		data = (gl.GLfloat * len(self.vertices))(*self.vertices)
-		gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self.vertices), data, gl.GL_STATIC_DRAW)	
+		try:
+			GL.glBindVertexArray(self.vao)
 
-	def construct_vao(self):
-		pass
-
-	def render(self):
-		gl.glClear(gl.GL_COLOR_BUFFER_BIT|gl.GL_DEPTH_BUFFER_BIT)
-		
-		gl.glLoadIdentity()
-		#gl.gluLookAt(5.0,5.0,5.0, 0.0,0.0,0.0,0.0,1.0,0.0)
-		gl.glDrawArrays(gl.GL_TRIANGLES, 0, len(self.vertices))
+			# draw triangle
+			GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3)
+		finally:
+			GL.glBindVertexArray(0)
+			GL.glUseProgram(0)
