@@ -7,19 +7,14 @@ class Player:
 	rect = [-1.0, -1.0, 1.0, 1.0]
 	x = 0.0
 	y = 0.0
-	vertices = []
+	vertices = [1.0, 1.0, 0.0,
+				-1.0, 1.0, 0.0,
+				-1.0, -1.0, 0.0]
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
 
 	def render(self):
-		gl.glUseProgram(self.shader.program)
-		#gl.glUniform1f(self.shader.uniform_location)
-		gl.glBegin(gl.GL_QUADS)
-		gl.glVertex3f(self.x + self.rect[0], self.y + self.rect[3], 0.0)
-		gl.glVertex3f(self.x + self.rect[0], self.y + self.rect[1], 0.0)
-		gl.glVertex3f(self.x + self.rect[2], self.y + self.rect[1], 0.0)
-		gl.glVertex3f(self.x + self.rect[2], self.y + self.rect[3], 0.0)
-		gl.glEnd()
+		pass
 
 	def update(self, keys):
 		if key.LEFT in keys:
