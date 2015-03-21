@@ -8,14 +8,18 @@ class Renderer:
 	vbo = None
 	vertices = []
 	vertexData = numpy.array([
-		0.0, 0.5, 0.0, 1.0,
-		0.5, -0.366, 0.0, 1.0,
-		-0.5, -0.366, 0.0, 1.0,
+		-0.5, 0.5, 0.0, 1.0,
+		0.5, -0.5, 0.0, 1.0,
+		-0.5, -0.5, 0.0, 1.0,
+		-0.5, 0.5, 0.0, 1.0,
+		0.5, 0.5, 0.0, 1.0,
+		0.5, -0.5, 0.0, 1.0,
 		1.0, 0.0, 0.0, 1.0,
 		0.0, 1.0, 0.0, 1.0,
 		0.0, 0.0, 1.0, 1.0,
 	], dtype=numpy.float32)
 	program = None
+	shader = None
 	uniColor = 0.0
 	time = 0.0
 	def __init__(self):
@@ -29,6 +33,7 @@ class Renderer:
 
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
+		print pos
 		GL.glEnableVertexAttribArray(pos)
 		#GL.glEnableVertexAttribArray(1)
 		GL.glVertexAttribPointer(pos, 4, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
@@ -51,6 +56,8 @@ class Renderer:
 
 			# draw triangle
 			GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3)
+			GL.glUseProgram(self.shader.program)
+			GL.glDrawArrays(GL.GL_TRIANGLES, 3, 3)
 		finally:
 			GL.glBindVertexArray(0)
 			GL.glUseProgram(0)

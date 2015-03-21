@@ -6,6 +6,8 @@ import ctypes
 import sdl2
 from sdl2 import video
 
+from shaders.Shader import Shader
+
 class Game:
 	entities = []
 	keys = []
@@ -38,6 +40,7 @@ class Game:
 		print "setting up shaders"
 		print "--------------------------"
 		self.entities.append(Player())
+		self.renderer.shader = Shader("static.vert", "player.frag")
 		self.renderer.program = self.entities[0].shader.program
 		self.renderer.setup_vao()
 		
@@ -51,6 +54,7 @@ class Game:
 	def update(self):
 		self.entities[0].update(self.keys)
 
+	# maybe a better way would be to map keys to actions and then do those actions on keypress
 	def input_key_pressed(self, key, repeat):
 		if repeat > 0:
 			return

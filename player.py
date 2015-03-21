@@ -20,11 +20,12 @@ class Player:
 
 	def update(self, keys):
 		if sdl2.SDLK_LEFT in keys:
-			self.x -= 0.1
+			self.x -= 0.05
 		if sdl2.SDLK_RIGHT in keys:
-			self.x += 0.1
+			self.x += 0.05
 		if sdl2.SDLK_UP in keys:
-			self.y += 0.1
+			self.y += 0.05
 		if sdl2.SDLK_DOWN in keys:
-			self.y -= 0.1
+			self.y -= 0.05
+		GL.glUseProgram(self.shader.program)
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)

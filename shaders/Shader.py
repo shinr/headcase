@@ -10,6 +10,8 @@ class Shader:
 		self.create_shader(vertex_shader, fragment_shader)
 
 	def check_shader(self, program_id, check_type):
+		print "checking ", program_id
+		print "--------------------"
 		length = ctypes.c_int(0)
 		data = ctypes.c_int(0)
 		if check_type == GL.GL_COMPILE_STATUS:
@@ -20,6 +22,8 @@ class Shader:
 				written = ctypes.c_int(0)
 				GL.glGetShaderInfoLog(program_id, length, None, buff)
 				print buff.value
+			else:
+				print "no errors"
 
 		elif check_type == GL.GL_LINK_STATUS:
 			GL.glGetProgramiv(program_id, check_type, data)
@@ -29,6 +33,8 @@ class Shader:
 				written = ctypes.c_int(0)
 				GL.glGetProgramInfoLog(program_id, length, written, buff)	
 				print buff.value
+			else:
+				print "no errors"
 
 	def set_uniform(self, uniform_name):
 		self.uniform_location = GL.glGetUniformLocation(self.program, uniform_name)
@@ -43,19 +49,17 @@ class Shader:
 	def create_shader(self, vert_shader=None, frag_shader=None):
 		if vert_shader:
 			vert = shaders.compileShader(self.read_shader(vert_shader), GL.GL_VERTEX_SHADER)
-			print vert
-			#self.check_shader(vert, GL.GL_COMPILE_STATUS)
+			self.check_shader(vert, GL.GL_COMPILE_STATUS)
 
 		if frag_shader:
 			frag = shaders.compileShader(self.read_shader(frag_shader), GL.GL_FRAGMENT_SHADER)
-			print frag
-			#self.check_shader(frag, GL.GL_COMPILE_STATUS)
+			self.check_shader(frag, GL.GL_COMPILE_STATUS)
 
-		self.program = GL.glCreateProgram();
-		GL.glAttachShader(self.program, vert);
-		GL.glAttachShader(self.program, frag);
-		GL.glBindFragDataLocation(self.program, 0, "outColor");
-		GL.glLinkProgram(self.program);
+		self.program = GL.glCreateProgram()
+		GL.glAttachShader(self.program, vert)
+		GL.glAttachShader(self.program, frag)
+		GL.glBindFragDataLocation(self.program, 0, "outColor")
+		GL.glLinkProgram(self.program)
 		#GL.glUseProgram(shaderProgram);
 		#self.program = shaders.compileProgram(vert, frag)
 
