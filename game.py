@@ -38,6 +38,8 @@ class Game:
 		print "setting up shaders"
 		print "--------------------------"
 		self.entities.append(Player())
+		self.renderer.program = self.entities[0].shader.program
+		self.renderer.setup_vao()
 		
 
 	def on_draw(self):		
@@ -46,25 +48,34 @@ class Game:
 
 		# draw ....
 
-	def update(self, dt):
+	def update(self):
 		self.entities[0].update(self.keys)
 
-	def on_key_press(self, button, modifiers):
-		if not button in self.keys: 
-			self.keys.append(button)
+	def input_key_pressed(self, key, repeat):
+		if repeat > 0:
+			return
+		if key not in self.keys:
+			self.keys.append(key)
 
-	def on_key_release(self, button, modifiers):
-		if button in self.keys: 
-			self.keys.remove(button)
+	def input_key_released(self, key, repeat):
+		if repeat > 0:
+			return
+		if key in self.keys:
+			self.keys.remove(key)
 
 	def loop(self):
+		print "ready"
 		event = sdl2.SDL_Event()
 		running = True
 		while running:
 			while sdl2.SDL_PollEvent(ctypes.byref(event)) != 0:
 				if event.type == sdl2.SDL_QUIT:
 					running = False
-
+				if event.type == sdl2.SDL_KEYDOWN:
+					self.input_key_pressed(event.key.keysym.sym, event.key.repeat)
+				elif event.type == sdl2.SDL_KEYUP:
+					self.input_key_released(event.key.keysym.sym, event.key.repeat)
+			self.update()
 			GL.glClearColor(0, 0, 0, 1)
 			GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
@@ -80,9 +91,3 @@ class Game:
 if __name__ == '__main__':
 	game = Game(800, 600)
 	game.loop()
-
-#glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, 3);
-	#glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 3);
-	#glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE);
-	#glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE);
-	#glfw.CreateWindow(800, 600, "Jeesus", None, None)
