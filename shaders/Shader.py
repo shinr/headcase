@@ -60,7 +60,5 @@ class Shader:
 		GL.glAttachShader(self.program, frag)
 		GL.glBindFragDataLocation(self.program, 0, "outColor")
 		GL.glLinkProgram(self.program)
-		#GL.glUseProgram(shaderProgram);
-		#self.program = shaders.compileProgram(vert, frag)
 
 		self.check_shader(self.program, GL.GL_LINK_STATUS)

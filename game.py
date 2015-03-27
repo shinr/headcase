@@ -2,7 +2,6 @@ from OpenGL import GL
 from player import Player
 from renderer import Renderer
 import ctypes
-#import cyglfw3 as glfw
 import sdl2
 from sdl2 import video
 
@@ -40,17 +39,17 @@ class Game:
 		print "setting up shaders"
 		print "--------------------------"
 		self.entities.append(Player())
+		# this whole thing needs to be planned out better
+		# basically on level load form the vertex arrays and apply them
+		# create elements and formulate shaders for each element
+		# then organize drawing
+		# it's not the most important factor on this, as we're pretty much
+		# dealing with small amount of squares but it'd be nice to make it neat
 		self.renderer.shader = Shader("static.vert", "player.frag")
 		self.renderer.program = self.entities[0].shader.program
 		self.renderer.setup_vao()
-		
 
-	def on_draw(self):		
-		self.renderer.render()
-		
-
-		# draw ....
-
+	# should player actually be a separate reference?
 	def update(self):
 		self.entities[0].update(self.keys)
 

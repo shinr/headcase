@@ -13,10 +13,6 @@ class Player:
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
 		self.pos = GL.glGetUniformLocation(self.shader.program, "pos")
-		print self.pos
-
-	def render(self):
-		pass
 
 	def update(self, keys):
 		if sdl2.SDLK_LEFT in keys:
@@ -27,5 +23,6 @@ class Player:
 			self.y += 0.05
 		if sdl2.SDLK_DOWN in keys:
 			self.y -= 0.05
+		# this works, but could it be done better?
 		GL.glUseProgram(self.shader.program)
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)
