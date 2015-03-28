@@ -30,12 +30,15 @@ class Renderer:
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
 		GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
 
+	# this should only happen once per level or something
 	def load_vertex_data(self, vertices, generate_vbos=False):
 		if not vertices:
 			return # just use the default data for now
 		self.vertexData = numpy.array(vertices, dtype=numpy.float32)
 		if generate_vbos:
-			pass
+			GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo) 
+			GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
+			# is this exactly good way to do this?
 
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
