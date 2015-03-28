@@ -30,6 +30,7 @@ class Renderer:
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
 		GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
 
+	# load new data
 	# this should only happen once per level or something
 	def load_vertex_data(self, vertices, generate_vbos=False):
 		if not vertices:
