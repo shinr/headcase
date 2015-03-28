@@ -17,28 +17,30 @@ class Renderer:
 		1.0, 0.0, 0.0, 1.0,
 		0.0, 1.0, 0.0, 1.0,
 		0.0, 0.0, 1.0, 1.0,
-	], dtype=numpy.float32)
-	program = None
-	shader = None
-	uniColor = 0.0
-	time = 0.0
-	def __init__(self):
-		
+	], dtype=numpy.float32) # this should be created via level generation
+	program = None # hacks
+	shader = None # hacks
+	uniColor = 0.0 # no
+	time = 0.0 # no
+	def __init__(self, vertices=None):
+		self.load_vertex_data(vertices)
 		self.vao = GL.glGenVertexArrays(1)
 		GL.glBindVertexArray(self.vao)
 		self.vbo = GL.glGenBuffers(1)
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
 		GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
-		#GL.gl
+
+	def load_vertex_data(self, vertices, generate_vbos=False):
+		if not vertices:
+			return # just use the default data for now
+		self.vertexData = numpy.array(vertices, dtype=numpy.float32)
+		if generate_vbos:
+			pass
 
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
-		print pos
 		GL.glEnableVertexAttribArray(pos)
-		#GL.glEnableVertexAttribArray(1)
 		GL.glVertexAttribPointer(pos, 4, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
-		#GL.glVertexAttribPointer(1, 4, GL.GL_FLOAT, GL.GL_FALSE, 0,
-		#ctypes.c_void_p(48))
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
 		GL.glBindVertexArray(0)
 
