@@ -41,6 +41,9 @@ class Renderer:
 			GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
 			# is this exactly good way to do this?
 
+	def queue_vertices(self, vertices):
+		self.vertices.extend(vertices)
+
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
 		GL.glEnableVertexAttribArray(pos)

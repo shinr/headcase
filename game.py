@@ -1,6 +1,7 @@
 from OpenGL import GL
 from player import Player
 from renderer import Renderer
+from level import Level
 import ctypes
 import sdl2
 from sdl2 import video
@@ -13,6 +14,8 @@ class Game:
 	renderer = None
 	window = None
 	context = None
+	currentLevel = None
+	levels = []
 	def __init__(self, width, height):
 		if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) != 0:
 			print (sdl2.SDL_GetError())
@@ -38,7 +41,7 @@ class Game:
 		self.renderer = Renderer()
 		print "setting up shaders"
 		print "--------------------------"
-		self.entities.append(Player())
+		self.currentLevel = Level(self.renderer)
 		# this whole thing needs to be planned out better
 		# basically on level load form the vertex arrays and apply them
 		# create elements and formulate shaders for each element
@@ -46,12 +49,12 @@ class Game:
 		# it's not the most important factor on this, as we're pretty much
 		# dealing with small amount of squares but it'd be nice to make it neat
 		self.renderer.shader = Shader("static.vert", "player.frag")
-		self.renderer.program = self.entities[0].shader.program
+		self.renderer.program = self.level.player.shader.program
 		self.renderer.setup_vao()
 
 	# should player actually be a separate reference?
 	def update(self):
-		self.entities[0].update(self.keys)
+		self.level.update(self.keys)
 
 	# maybe a better way would be to map keys to actions and then do those actions on keypress
 	def input_key_pressed(self, key, repeat):
@@ -82,7 +85,7 @@ class Game:
 			GL.glClearColor(0, 0, 0, 1)
 			GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-			self.renderer.render(self.entities[0].shader.program)
+			self.level.render()
 
 			sdl2.SDL_GL_SwapWindow(self.window)
 			sdl2.SDL_Delay(10)

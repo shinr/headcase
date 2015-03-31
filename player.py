@@ -9,6 +9,7 @@ class Player:
 	vertices = [1.0, 1.0, 0.0,
 				-1.0, 1.0, 0.0,
 				-1.0, -1.0, 0.0]
+	elements = []
 	pos = None
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
@@ -26,3 +27,6 @@ class Player:
 		# this works, but could it be done better?
 		GL.glUseProgram(self.shader.program)
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)
+
+	def render(self):
+		return (self.shader, self.elements)
