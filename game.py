@@ -49,12 +49,12 @@ class Game:
 		# it's not the most important factor on this, as we're pretty much
 		# dealing with small amount of squares but it'd be nice to make it neat
 		self.renderer.shader = Shader("static.vert", "player.frag")
-		self.renderer.program = self.level.player.shader.program
+		self.renderer.program = self.currentLevel.player.shader.program
 		self.renderer.setup_vao()
 
 	# should player actually be a separate reference?
 	def update(self):
-		self.level.update(self.keys)
+		self.currentLevel.update(self.keys)
 
 	# maybe a better way would be to map keys to actions and then do those actions on keypress
 	def input_key_pressed(self, key, repeat):
@@ -85,7 +85,7 @@ class Game:
 			GL.glClearColor(0, 0, 0, 1)
 			GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-			self.level.render()
+			self.currentLevel.render()
 
 			sdl2.SDL_GL_SwapWindow(self.window)
 			sdl2.SDL_Delay(10)
