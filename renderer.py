@@ -19,6 +19,7 @@ class Renderer:
 		0.0, 0.0, 1.0, 1.0,
 	], dtype=numpy.float32) # this should be created via level generation
 	elementData = numpy.array([0, 1, 2, 0, 1, 3], dtype=numpy.int32)
+	offset_bytes = 4
 	program = None # hacks
 	shader = None # hacks
 	uniColor = 0.0 # no
@@ -60,7 +61,7 @@ class Renderer:
 
 	def render(self, program):
 		self.time += .01
-		
+		element_index = 0 # hack
 		GL.glClearColor(0, 0, 0, 1)
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
@@ -70,10 +71,8 @@ class Renderer:
 		try:
 			GL.glBindVertexArray(self.vao)
 
-			# draw triangle
-			GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, ctypes.c_void_p(0))
-			#GL.glUseProgram(self.shader.program)
-			#GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, ctypes.c_void_p(0))
+			# draw triangle, not very exciting
+			GL.glDrawElements(GL.GL_TRIANGLES, 3, GL.GL_UNSIGNED_INT, ctypes.c_void_p(element_index * self.offset_bytes))
 		finally:
 			GL.glBindVertexArray(0)
 			GL.glUseProgram(0)
