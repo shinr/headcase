@@ -9,6 +9,7 @@ class Renderer:
 	vbo = None
 	ebo = None
 	vertices = []
+	elements = []
 	vertexData = numpy.array([
 		-0.5, 0.5, 0.0, 1.0,
 		0.5, -0.5, 0.0, 1.0,
@@ -21,12 +22,14 @@ class Renderer:
 	elementData = numpy.array([0, 1, 2, 0, 1, 3], dtype=numpy.int32)
 	offset_bytes = 4
 	program = None # hacks
-	shader = None # hacks
-	uniColor = 0.0 # no
 	time = 0.0 # no
+	rendering_queue = {}
+	# queue:
+	# shader_program: (element_count, offset), (element_count, offset), ...
 	def __init__(self, vertices=None, elements=None):
 		self.load_vertex_data(vertices, elements)
 		self.vao = GL.glGenVertexArrays(1)
+		print self.vao
 		GL.glBindVertexArray(self.vao)
 		self.vbo = GL.glGenBuffers(1)
 		self.ebo = GL.glGenBuffers(1)
@@ -41,7 +44,7 @@ class Renderer:
 		if not vertices:
 			return # just use the default data for now
 		self.vertexData = numpy.array(vertices, dtype=numpy.float32)
-		self.elementData = numpy.array(elements, dtype=numpy.float32)
+		self.elementData = numpy.array(elements, dtype=numpy.int32)
 		if generate_vbos:
 			GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo) 
 			GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
@@ -52,6 +55,15 @@ class Renderer:
 	def queue_vertices(self, vertices):
 		self.vertices.extend(vertices)
 
+	def queue_elements(self, elements):
+		self.elements.extend(elements)
+
+	def queue(self, program, element_count, index_offset):
+		if program in self.rendering_queue.keys():
+			self.rendering_queue[program].append((element_count, index_offset))
+		else:
+			self.rendering_queue[program] = [(element_count, index_offset)]
+
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
 		GL.glEnableVertexAttribArray(pos)
@@ -59,20 +71,21 @@ class Renderer:
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
 		GL.glBindVertexArray(0)
 
-	def render(self, program):
+	def render(self):
 		self.time += .01
-		element_index = 0 # hack
 		GL.glClearColor(0, 0, 0, 1)
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+		# loop through queue
+		for s, q in self.rendering_queue.iteritems():
+			# active shader program
+			GL.glUseProgram(s)
+			for e in q:
+				try:
+					GL.glBindVertexArray(self.vao)
 
-		# active shader program
-		GL.glUseProgram(program)
-
-		try:
-			GL.glBindVertexArray(self.vao)
-
-			# draw triangle, not very exciting
-			GL.glDrawElements(GL.GL_TRIANGLES, 3, GL.GL_UNSIGNED_INT, ctypes.c_void_p(element_index * self.offset_bytes))
-		finally:
-			GL.glBindVertexArray(0)
-			GL.glUseProgram(0)
+					# draw triangle, not very exciting
+					GL.glDrawElements(GL.GL_TRIANGLES, e[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p(e[1] * self.offset_bytes))
+				finally:
+					GL.glBindVertexArray(0)
+					GL.glUseProgram(0)
+		self.rendering_queue.clear()

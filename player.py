@@ -3,14 +3,14 @@ from OpenGL import GL
 import sdl2
 class Player:
 	shader = None
-	rect = [-1.0, -1.0, 1.0, 1.0]
 	x = 0.0
 	y = 0.0
 	vertices = [1.0, 1.0, 0.0,
 				-1.0, 1.0, 0.0,
 				-1.0, -1.0, 0.0]
-	elements = []
+	elements = [0, 1, 2]
 	pos = None
+	offset = 0
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
 		self.pos = GL.glGetUniformLocation(self.shader.program, "pos")
@@ -24,9 +24,12 @@ class Player:
 			self.y += 0.05
 		if sdl2.SDLK_DOWN in keys:
 			self.y -= 0.05
+		self.update_uniforms()
+
+	def update_uniforms(self):
 		# this works, but could it be done better?
 		GL.glUseProgram(self.shader.program)
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)
 
 	def render(self):
-		return (self.shader, self.elements)
+		return (self.shader.program, len(self.elements), self.offset)

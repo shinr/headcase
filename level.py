@@ -7,14 +7,17 @@ class Level:
 	def __init__(self, renderer):
 		self.renderer = renderer
 		self.player = Player()
+		self.entities.append(self.player)
 
 	def generate_level(self):
 		pass
 
 	def update(self, keys):
 		for e in self.entities:
-			e.update()
-		self.player.update(keys)
+			e.update(keys)
+		#self.player.update(keys)
 
 	def render(self):
-		self.renderer.render(self.player.shader.program)
+		for e in self.entities:
+			self.renderer.queue(*e.render())
+		self.renderer.render()
