@@ -8,6 +8,7 @@ class Level:
 		self.renderer = renderer
 		self.player = Player()
 		self.entities.append(self.player)
+		self.generate_level()
 
 	def generate_level(self):
 		pass

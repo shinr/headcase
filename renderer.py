@@ -52,6 +52,19 @@ class Renderer:
 			GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, self.elementData.nbytes, self.elementData, GL.GL_STATIC_DRAW)
 			# is this exactly good way to do this?
 
+	def queue_data(self, vertices, elements):
+		for v in vertices:
+			if v in self.vertices:
+				old_index = vertices.index(v)
+				new_index = self.vertices.index(v) - len(self.vertices)
+				while elements.index(old_index):
+					elements[elements.index(old_index)] = new_index
+				while v in vertices: vertices.remove(v)
+		self.queue_vertices(vertices)
+		for i in range(0, len(elements)):
+			elements[i] = elements[i] + len(self.vertices)
+		self.queue_elements(elements)
+
 	def queue_vertices(self, vertices):
 		self.vertices.extend(vertices)
 
