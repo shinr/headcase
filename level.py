@@ -1,5 +1,5 @@
 from player import Player
-
+from entity import Entity
 class Level:
 	entities = []
 	player = None
@@ -11,7 +11,9 @@ class Level:
 		self.generate_level()
 
 	def generate_level(self):
-		pass
+		self.entities.append(Entity("static.vert", "player.frag"))
+		for e in self.entities:
+			self.renderer.queue_data(e.vertices, e.elements)
 
 	def update(self, keys):
 		for e in self.entities:

@@ -53,16 +53,22 @@ class Renderer:
 			# is this exactly good way to do this?
 
 	def queue_data(self, vertices, elements):
+		to_remove = []
 		for v in vertices:
 			if v in self.vertices:
+				print "duplicate: ", v.x, v.y, v.z
 				old_index = vertices.index(v)
-				new_index = self.vertices.index(v) - len(self.vertices)
-				while elements.index(old_index):
-					elements[elements.index(old_index)] = new_index
-				while v in vertices: vertices.remove(v)
+				new_index = self.vertices.index(v)
+				for i in range(0, len(elements)):
+					if elements[i] == old_index:
+						elements[i] = new_index
+				to_remove.append(v)
+		for v in vertices:
+			if v not in to_remove:
+				i = vertices.index(v)
+				elements[i] += len(self.vertices) - len(to_remove)
+		vertices = [v for v in vertices if v not in to_remove]
 		self.queue_vertices(vertices)
-		for i in range(0, len(elements)):
-			elements[i] = elements[i] + len(self.vertices)
 		self.queue_elements(elements)
 
 	def queue_vertices(self, vertices):

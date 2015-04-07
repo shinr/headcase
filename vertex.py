@@ -2,6 +2,7 @@ class Vertex:
 	x = 0.0
 	y = 0.0
 	z = 0.0
+	w = 1.0
 	def __init__(self, x, y, z):
 		self.x, self.y, self.z = x, y, z
 
@@ -16,6 +17,6 @@ class Vertex:
 			return NotImplemented
 
 	def unwrap(self):
-		return self.x, self.y, self.z
+		return self.x, self.y, self.z, self.w
 
 
