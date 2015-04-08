@@ -82,8 +82,6 @@ class Game:
 				elif event.type == sdl2.SDL_KEYUP:
 					self.input_key_released(event.key.keysym.sym, event.key.repeat)
 			self.update()
-			GL.glClearColor(0, 0, 0, 1)
-			GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
 			self.currentLevel.render()
 

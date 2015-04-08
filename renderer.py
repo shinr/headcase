@@ -43,6 +43,10 @@ class Renderer:
 	def load_vertex_data(self, vertices, elements, generate_vbos=False):
 		if not vertices:
 			return # just use the default data for now
+		verts = []
+		for v in vertices:
+			verts.extend(v.unwrap())
+		vertices = verts
 		self.vertexData = numpy.array(vertices, dtype=numpy.float32)
 		self.elementData = numpy.array(elements, dtype=numpy.int32)
 		if generate_vbos:
@@ -52,7 +56,7 @@ class Renderer:
 			GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, self.elementData.nbytes, self.elementData, GL.GL_STATIC_DRAW)
 			# is this exactly good way to do this?
 
-	def queue_data(self, vertices, elements):
+	def queue_data(self, vertices, elements, offset_callback):
 		to_remove = []
 		for v in vertices:
 			if v in self.vertices:
@@ -63,12 +67,30 @@ class Renderer:
 					if elements[i] == old_index:
 						elements[i] = new_index
 				to_remove.append(v)
+		print vertices, elements
+		element_indices = []
 		for v in vertices:
 			if v not in to_remove:
-				i = vertices.index(v)
-				elements[i] += len(self.vertices) - len(to_remove)
+				try:
+					element_number = vertices.index(v)
+					element_indices.append(element_number)
+				except ValueError:
+					print "value error"
+		element_indices.sort(reverse=True)
+		print element_indices
+		if len(self.vertices) > 0:
+			for ind in element_indices:
+				while True:
+					try:
+						print ".",
+						i = elements.index(ind)
+					except:
+						print i, 
+						break
+					elements[i] += len(self.vertices) - len(to_remove)
 		vertices = [v for v in vertices if v not in to_remove]
 		self.queue_vertices(vertices)
+		offset_callback.set_offset(len(self.elements))
 		self.queue_elements(elements)
 
 	def queue_vertices(self, vertices):
@@ -96,12 +118,12 @@ class Renderer:
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 		# loop through queue
 		for s, q in self.rendering_queue.iteritems():
+			#print s, q
 			# active shader program
 			GL.glUseProgram(s)
 			for e in q:
 				try:
 					GL.glBindVertexArray(self.vao)
-
 					# draw triangle, not very exciting
 					GL.glDrawElements(GL.GL_TRIANGLES, e[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p(e[1] * self.offset_bytes))
 				finally:
