@@ -8,6 +8,7 @@ class Renderer:
 	vao = None
 	vbo = None
 	ebo = None
+	tex = None
 	vertices = []
 	elements = []
 	vertexData = numpy.array([
@@ -33,6 +34,7 @@ class Renderer:
 		GL.glBindVertexArray(self.vao)
 		self.vbo = GL.glGenBuffers(1)
 		self.ebo = GL.glGenBuffers(1)
+		self.tex = GL.glGenTextures(1)
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
 		GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertexData.nbytes, self.vertexData, GL.GL_STATIC_DRAW)
 		GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ebo)
@@ -107,8 +109,10 @@ class Renderer:
 
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
+		col = GL.glGetAttribLocation(self.program, "color")
 		GL.glEnableVertexAttribArray(pos)
 		GL.glVertexAttribPointer(pos, 4, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
+
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
 		GL.glBindVertexArray(0)
 

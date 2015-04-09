@@ -12,6 +12,9 @@ class Player:
 	elements = [0, 1, 2]
 	pos = None
 	offset = 0
+	color = []
+	texture = None
+	texture_coords = []
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
 		self.pos = GL.glGetUniformLocation(self.shader.program, "pos")
