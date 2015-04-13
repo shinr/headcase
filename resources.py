@@ -1,0 +1,3 @@
+# resources
+
+entity = "entity.bmp"

@@ -101,9 +101,12 @@ class Renderer:
 	def queue_elements(self, elements):
 		self.elements.extend(elements)
 
-	def queue(self, program, element_count, index_offset):
+	def queue(self, program, texture, element_count, index_offset):
 		if program in self.rendering_queue.keys():
-			self.rendering_queue[program].append((element_count, index_offset))
+			if texture in self.rendering_queue[program].keys():
+				self.rendering_queue[program][texture].append((element_count, index_offset))
+			else:
+				self.rendering_queue[program][texture] = [(element_count, index_offset)]
 		else:
 			self.rendering_queue[program] = [(element_count, index_offset)]
 
@@ -121,16 +124,17 @@ class Renderer:
 		GL.glClearColor(0, 0, 0, 1)
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 		# loop through queue
-		for s, q in self.rendering_queue.iteritems():
+		for shader, queue in self.rendering_queue.iteritems():
 			#print s, q
 			# active shader program
-			GL.glUseProgram(s)
-			for e in q:
-				try:
-					GL.glBindVertexArray(self.vao)
-					# draw triangle, not very exciting
-					GL.glDrawElements(GL.GL_TRIANGLES, e[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p(e[1] * self.offset_bytes))
-				finally:
-					GL.glBindVertexArray(0)
-					GL.glUseProgram(0)
+			GL.glUseProgram(shader)
+			try:
+				for texture, data in q.iteritems():
+					for entity in data:
+						GL.glBindVertexArray(self.vao)
+						# draw triangle, not very exciting
+						GL.glDrawElements(GL.GL_TRIANGLES, entity[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p(entity[1] * self.offset_bytes))
+			finally:
+				GL.glBindVertexArray(0)
+				GL.glUseProgram(0)
 		self.rendering_queue.clear()

@@ -2,6 +2,9 @@ from shaders.Shader import Shader
 from OpenGL import GL
 import sdl2
 from vertex import Vertex
+import Pillow
+import resources
+
 class Entity:
 	shader = None
 	x = 0.0
@@ -13,11 +16,12 @@ class Entity:
 				Vertex(0.3, -.6, 0.0),
 				Vertex(0.3, 0.3, 0.0)]
 	texture = None
+	texture_image = None
 	elements = [0, 1, 2, 0, 3, 2, 0, 4, 5, 0, 3, 5]
 	offset = 0
-	def __init__(self, vert, frag, texture):
+	def __init__(self, vert, frag, texture_name):
 		self.shader = Shader(vert, frag)
-
+		self.texture_image = PIL.Image.open(texture_name)
 	def update(self, dt):
 		self.update_uniforms()
 

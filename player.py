@@ -2,6 +2,7 @@ from shaders.Shader import Shader
 from OpenGL import GL
 import sdl2
 from vertex import Vertex
+import Pillow
 class Player:
 	shader = None
 	x = 0.0
