@@ -2,7 +2,7 @@ from shaders.Shader import Shader
 from OpenGL import GL
 import sdl2
 from vertex import Vertex
-import Pillow
+from PIL import Image
 class Player:
 	shader = None
 	x = 0.0
@@ -14,7 +14,7 @@ class Player:
 	pos = None
 	offset = 0
 	color = []
-	texture = None
+	texture = 0
 	texture_coords = []
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
@@ -37,7 +37,7 @@ class Player:
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)
 
 	def render(self):
-		return (self.shader.program, len(self.elements), self.offset)
+		return (self.shader.program, self.texture, len(self.elements), self.offset)
 
 	def set_offset(self, offset):
 		self.offset = offset

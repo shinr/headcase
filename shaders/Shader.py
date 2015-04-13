@@ -2,6 +2,7 @@ from OpenGL.GL import shaders
 from OpenGL import GL
 import ctypes
 import os
+import shaderdb
 
 class Shader:
 	program = None
@@ -46,14 +47,15 @@ class Shader:
 		f.close()
 		return contents
 
-	def create_shader(self, vert_shader=None, frag_shader=None):
-		if vert_shader:
-			vert = shaders.compileShader(self.read_shader(vert_shader), GL.GL_VERTEX_SHADER)
-			self.check_shader(vert, GL.GL_COMPILE_STATUS)
+	def create_shader(self, vert_shader, frag_shader):
+		if shaderdb.get_shader(vert_shader, frag_shader):
+			self.program = shaderdb.get_shader(vert_shader, frag_shader)
+			return
+		vert = shaders.compileShader(self.read_shader(vert_shader), GL.GL_VERTEX_SHADER)
+		self.check_shader(vert, GL.GL_COMPILE_STATUS)
 
-		if frag_shader:
-			frag = shaders.compileShader(self.read_shader(frag_shader), GL.GL_FRAGMENT_SHADER)
-			self.check_shader(frag, GL.GL_COMPILE_STATUS)
+		frag = shaders.compileShader(self.read_shader(frag_shader), GL.GL_FRAGMENT_SHADER)
+		self.check_shader(frag, GL.GL_COMPILE_STATUS)
 
 		self.program = GL.glCreateProgram()
 		GL.glAttachShader(self.program, vert)
@@ -62,3 +64,4 @@ class Shader:
 		GL.glLinkProgram(self.program)
 
 		self.check_shader(self.program, GL.GL_LINK_STATUS)
+		shaderdb.save_shader(vert_shader, frag_shader, self.program)

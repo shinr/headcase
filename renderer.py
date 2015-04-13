@@ -69,7 +69,7 @@ class Renderer:
 					if elements[i] == old_index:
 						elements[i] = new_index
 				to_remove.append(v)
-		print vertices, elements
+		#print vertices, elements
 		element_indices = []
 		for v in vertices:
 			if v not in to_remove:
@@ -108,14 +108,15 @@ class Renderer:
 			else:
 				self.rendering_queue[program][texture] = [(element_count, index_offset)]
 		else:
-			self.rendering_queue[program] = [(element_count, index_offset)]
+			self.rendering_queue[program] = {texture:[(element_count, index_offset)]}
 
 	def setup_vao(self):
 		pos = GL.glGetAttribLocation(self.program, "position")
 		col = GL.glGetAttribLocation(self.program, "color")
 		GL.glEnableVertexAttribArray(pos)
-		GL.glVertexAttribPointer(pos, 4, GL.GL_FLOAT, GL.GL_FALSE, 0, None)
-
+		GL.glVertexAttribPointer(pos, 4, GL.GL_FLOAT, GL.GL_FALSE, 8 * 4, None)
+		GL.glEnableVertexAttribArray(col)
+		GL.glVertexAttribPointer(col, 4, GL.GL_FLOAT, GL.GL_FALSE, 8 * 4, ctypes.c_void_p(4 * 4))
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
 		GL.glBindVertexArray(0)
 
@@ -124,13 +125,14 @@ class Renderer:
 		GL.glClearColor(0, 0, 0, 1)
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 		# loop through queue
+		#print "rendering ", self.rendering_queue
 		for shader, queue in self.rendering_queue.iteritems():
-			#print s, q
 			# active shader program
 			GL.glUseProgram(shader)
 			try:
-				for texture, data in q.iteritems():
+				for texture, data in queue.iteritems():
 					for entity in data:
+						#print entity
 						GL.glBindVertexArray(self.vao)
 						# draw triangle, not very exciting
 						GL.glDrawElements(GL.GL_TRIANGLES, entity[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p(entity[1] * self.offset_bytes))
