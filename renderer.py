@@ -30,7 +30,6 @@ class Renderer:
 	def __init__(self, vertices=None, elements=None):
 		self.load_vertex_data(vertices, elements)
 		self.vao = GL.glGenVertexArrays(1)
-		print self.vao
 		GL.glBindVertexArray(self.vao)
 		self.vbo = GL.glGenBuffers(1)
 		self.ebo = GL.glGenBuffers(1)
@@ -57,8 +56,10 @@ class Renderer:
 			GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ebo)
 			GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, self.elementData.nbytes, self.elementData, GL.GL_STATIC_DRAW)
 			# is this exactly good way to do this?
-
-	def queue_data(self, vertices, elements, offset_callback):
+	# we check for duplicates in vertices
+	def queue_data(self, entity):
+		vertices = entity.vertices
+		elements = entity.elements
 		to_remove = []
 		for v in vertices:
 			if v in self.vertices:
@@ -69,7 +70,6 @@ class Renderer:
 					if elements[i] == old_index:
 						elements[i] = new_index
 				to_remove.append(v)
-		#print vertices, elements
 		element_indices = []
 		for v in vertices:
 			if v not in to_remove:
@@ -79,24 +79,26 @@ class Renderer:
 				except ValueError:
 					print "value error"
 		element_indices.sort(reverse=True)
-		print element_indices
 		if len(self.vertices) > 0:
 			for ind in element_indices:
+				print ind, "->",
 				while True:
 					try:
 						print ".",
 						i = elements.index(ind)
 					except:
-						print i, 
+						print "ok", 
 						break
 					elements[i] += len(self.vertices) - len(to_remove)
 		vertices = [v for v in vertices if v not in to_remove]
 		self.queue_vertices(vertices)
-		offset_callback.set_offset(len(self.elements))
+		entity.set_offset(len(self.elements))
+		print "done"
 		self.queue_elements(elements)
 
 	def queue_vertices(self, vertices):
 		self.vertices.extend(vertices)
+		print "verts: ", len(self.vertices)
 
 	def queue_elements(self, elements):
 		self.elements.extend(elements)
@@ -132,10 +134,9 @@ class Renderer:
 			try:
 				for texture, data in queue.iteritems():
 					for entity in data:
-						#print entity
 						GL.glBindVertexArray(self.vao)
 						# draw triangle, not very exciting
-						GL.glDrawElements(GL.GL_TRIANGLES, entity[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p(entity[1] * self.offset_bytes))
+						GL.glDrawElements(GL.GL_TRIANGLES, entity[0], GL.GL_UNSIGNED_INT, ctypes.c_void_p((entity[1]) * self.offset_bytes))
 			finally:
 				GL.glBindVertexArray(0)
 				GL.glUseProgram(0)

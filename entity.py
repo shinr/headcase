@@ -4,26 +4,30 @@ import sdl2
 from vertex import Vertex
 from PIL import Image
 import resources
-
+import random
 class Entity:
 	shader = None
 	x = 0.0
 	y = 0.0
-	vertices = [Vertex(0.3, -.3, 0.0),
-				Vertex(-0.3, -.3, 0.0),
-				Vertex(-0.3, 0.3, 0.0),
-				Vertex(0.3, 0.6, 0.0),
-				Vertex(0.3, -.6, 0.0),
-				Vertex(0.3, 0.3, 0.0)]
+	vertices = None
 	texture = 0
 	texture_image = None
-	elements = [0, 1, 2, 0, 3, 2, 0, 4, 5, 0, 3, 5]
+	elements = None
 	offset = 0
-	def __init__(self, vert, frag, texture_name=None):
+	def __init__(self, x, y, vert, frag, texture_name=None):
+		self.x, self.y = x, y
 		self.shader = Shader(vert, frag)
-		self.vertices = [v.randomize() for v in self.vertices]
+		self.vertices = [
+		Vertex(x + 0.3, y - 0.3, 0.0), 
+		Vertex(x + 0.3, y + 0.3, 0.0), 
+		Vertex(x - 0.3, y - 0.3, 0.0), 
+		Vertex(x - 0.3, y + 0.3, 0.0), 
+		Vertex(x, y - 0.5, 0.0),  
+		Vertex(x, y + 0.5, 0.0)] 
+		self.elements = [3, 1, 5, 2, 0, 4, 3, 1, 0, 3, 0, 2]
 		if texture_name:
 			self.texture_image = Image.open(resources.get_file(texture_name))
+
 	def update(self, dt):
 		self.update_uniforms()
 

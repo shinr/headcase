@@ -26,9 +26,9 @@ class Vertex:
 		else:
 			return NotImplemented
 
-	def randomize(self):
-		self.x = -random.random() + random.random()
-		self.y = -random.random() + random.random()
+	def randomize(self, x=0.0, y=0.0):
+		self.x = x -random.random() + random.random()
+		self.y = y -random.random() + random.random()
 		self.z = -random.random() + random.random()
 		return self
 

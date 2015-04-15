@@ -11,10 +11,10 @@ class Level:
 		self.generate_level()
 
 	def generate_level(self):
-		self.entities.append(Entity("static.vert", "player.frag"))
-		self.entities.append(Entity("static.vert", "player.frag"))
+		self.entities.append(Entity(-.5, 0.0, "static.vert", "player.frag"))
+		self.entities.append(Entity(.5, 0.0, "static.vert", "player.frag"))
 		for e in self.entities:
-			self.renderer.queue_data(e.vertices, e.elements, e)
+			self.renderer.queue_data(e)
 		self.renderer.load_vertex_data(self.renderer.vertices, self.renderer.elements, True)
 
 	def update(self, keys):
