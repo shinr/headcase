@@ -16,6 +16,7 @@ class Player:
 	color = []
 	texture = 0
 	texture_coords = []
+	layer = 5
 	def __init__(self):
 		self.shader = Shader("player.vert", "player.frag")
 		self.pos = GL.glGetUniformLocation(self.shader.program, "pos")
@@ -37,7 +38,7 @@ class Player:
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)
 
 	def render(self):
-		return (self.shader.program, self.texture, len(self.elements), self.offset)
+		return (self.layer, self.shader.program, self.texture, len(self.elements), self.offset)
 
 	def set_offset(self, offset):
 		self.offset = offset

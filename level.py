@@ -20,7 +20,6 @@ class Level:
 	def update(self, keys):
 		for e in self.entities:
 			e.update(keys)
-		#self.player.update(keys)
 
 	def render(self):
 		for e in self.entities:

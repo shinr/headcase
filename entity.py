@@ -14,6 +14,7 @@ class Entity:
 	texture_image = None
 	elements = None
 	offset = 0
+	layer = 1
 	def __init__(self, x, y, vert, frag, texture_name=None):
 		self.x, self.y = x, y
 		self.shader = Shader(vert, frag)
@@ -35,7 +36,7 @@ class Entity:
 		pass
 
 	def render(self):
-		return (self.shader.program, self.texture, len(self.elements), self.offset)
+		return (self.layer, self.shader.program, self.texture, len(self.elements), self.offset)
 
 	def set_offset(self, offset):
 		self.offset = offset
