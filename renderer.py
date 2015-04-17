@@ -57,6 +57,13 @@ class Renderer:
 			GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, self.elementData.nbytes, self.elementData, GL.GL_STATIC_DRAW)
 			# is this exactly good way to do this?
 	# we check for duplicates in vertices
+	# if duplicates are found, update the elements array to point to right location
+	# and mark the duplicates as removeable
+	# then we go through the elements and update them to reflect the positions
+	# in the full array of elements, if the
+	# corresponding vertex is not in removeable which is to say it didn't just get
+	# updated
+	# then save all the data
 	def queue_data(self, entity):
 		vertices = entity.vertices
 		elements = entity.elements
@@ -124,6 +131,8 @@ class Renderer:
 		GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
 		GL.glBindVertexArray(0)
 
+	# i guess i should design a proper method for this cause it seems it'll
+	# change a lot
 	def render(self):
 		self.time += .01
 		GL.glClearColor(0, 0, 0, 1)

@@ -3,24 +3,18 @@ from OpenGL import GL
 import sdl2
 from vertex import Vertex
 from PIL import Image
-class Player:
-	shader = None
-	x = 0.0
-	y = 0.0
-	vertices = [Vertex(-.5, .5, 0.0),
-				Vertex(.5, -.5, 0.0),
-				Vertex(-.5, -.5, 0.0)]
-	elements = [0, 1, 2]
+from entity import Entity
+class Player(Entity):
 	pos = None
-	offset = 0
-	color = []
-	texture = 0
-	texture_coords = []
 	layer = 5
 	def __init__(self):
-		self.shader = Shader("player.vert", "player.frag")
+		super(Player, self).__init__(0.0, 0.0, 'player.vert', 'player.frag')
 		self.pos = GL.glGetUniformLocation(self.shader.program, "pos")
-
+		self.elements = [0, 1, 2]
+		self.vertices = [Vertex(-.5, .5, 0.0),
+				Vertex(.5, -.5, 0.0),
+				Vertex(-.5, -.5, 0.0)]
+		self.layer = 5
 	def update(self, keys):
 		if sdl2.SDLK_LEFT in keys:
 			self.x -= 0.05
@@ -36,9 +30,3 @@ class Player:
 		# this works, but could it be done better?
 		GL.glUseProgram(self.shader.program)
 		GL.glUniform3f(self.pos, self.x, self.y, 0.0)
-
-	def render(self):
-		return (self.layer, self.shader.program, self.texture, len(self.elements), self.offset)
-
-	def set_offset(self, offset):
-		self.offset = offset
